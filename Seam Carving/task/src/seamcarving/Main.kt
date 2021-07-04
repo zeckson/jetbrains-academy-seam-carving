@@ -6,7 +6,7 @@ import java.awt.image.Raster
 import java.io.File
 import javax.imageio.ImageIO
 
-val LOG = true
+const val LOG = true
 fun log(value: String) {
     if (LOG) {
         println(value)
