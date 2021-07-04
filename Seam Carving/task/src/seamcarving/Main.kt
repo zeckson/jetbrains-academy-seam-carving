@@ -20,12 +20,15 @@ fun main(args: Array<String>) {
 
     val image = ImageIO.read(File(input))
     val originalRaster = image.raster
-    val buffer = originalRaster.dataBuffer
+    val copyRaster = image.copyData(null)
 
     val width = image.width
     val height = image.height
 
-    val accessor = buildEnergyMap(buffer, width, height)
+    val accessor = findSeam(
+        DataAccessor(originalRaster.dataBuffer, width, height),
+        DataAccessor(copyRaster.dataBuffer, width, height)
+    )
 
     image.data = Raster.createWritableRaster(originalRaster.sampleModel, accessor.buffer, null)
 
@@ -33,16 +36,15 @@ fun main(args: Array<String>) {
 }
 
 private fun findSeam(
-    buffer: DataBuffer,
-    width: Int,
-    height: Int
+    inAccessor: DataAccessor,
+    outAccessor: DataAccessor,
 ): DataAccessor {
-    val accessor = DataAccessor(buffer, width, height)
     var lowestEnergy = Double.MAX_VALUE
     var lowestX = 0
+
     // Find lowest energy
-    for (x in 0..width) {
-        val energy = accessor.getEnergy(x, 0)
+    for (x in 0..inAccessor.width) {
+        val energy = inAccessor.getEnergy(x, 0)
         if (energy < lowestEnergy) {
             lowestEnergy = energy
             lowestX = x
@@ -51,14 +53,15 @@ private fun findSeam(
 
     var currentX = lowestX
     var currentY = 0
+
     // go seam
     while (true) {
-        accessor.setPixel(currentX, currentY, RED)
-        currentY += 1
-        if (currentY == height) break
-        currentX = accessor.lowestX(currentX, currentY)
+        outAccessor.setPixel(currentX, currentY, RED)
+        ++currentY
+        if (currentY == inAccessor.height) break
+        currentX = inAccessor.lowestX(currentX, currentY)
     }
-    return accessor
+    return outAccessor
 }
 
 private fun buildEnergyMap(

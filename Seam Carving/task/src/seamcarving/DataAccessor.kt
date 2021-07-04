@@ -48,15 +48,20 @@ class DataAccessor(val buffer: DataBuffer, val width: Int, val height: Int) {
     }
 
     fun lowestX(x: Int, y: Int): Int {
+        if (y == 2) {
+            log("[6, 2] = ${getEnergy(6, 2)}")
+            log("[7, 2] = ${getEnergy(7, 2)}")
+            log("[8, 2] = ${getEnergy(8, 2)}")
+        }
         val center = getEnergy(x, y)
         var left = center
         val leftX = x - 1
-        if (x > 0) {
+        if (leftX >= 0) {
             left = getEnergy(leftX, y)
         }
         var right = center
         val rightX = x + 1
-        if (x < width) {
+        if (rightX < width) {
             right = getEnergy(rightX, y)
         }
         val out = when {
@@ -64,7 +69,7 @@ class DataAccessor(val buffer: DataBuffer, val width: Int, val height: Int) {
             right < center && right < left -> rightX
             else -> x
         }
-        log("l = $left, c = $center, r = $right")
+        log("[$leftX, $y] = $left, [$x, $y] = $center, [$rightX, $y] = $right")
         log("selected = ${out - x}, c: [$out, $y]")
         return out
 
