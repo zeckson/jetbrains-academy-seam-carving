@@ -267,6 +267,7 @@ files:
   learner_created: false
 - name: test/small.png
   visible: false
+  text: iVBORw0KGgoAAAANSUhEUgAAAA8AAAAKCAIAAADkeZOuAAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAActJREFUGFcVyz1v00AYAGDf2efYcS6xY2onTZNYhYZSAaLqBKK/gBVloRJCTLAwVgIJ2qUDFYIBImWjEzMSEwNKJr5EADEQBIKilgo1UaCJff58fdD9eVBlR0ixUDIWbXw0cVmv9VxIE4XLuKmCTopfzzj98yK4+oQdcSm6/3bFIgv6zLm/RoYlk4+vO09ebJTAKifT3iUg2w1td14CVnBd08uih99vzqFlWa/HmupLfj/ubdy9WopME4rsWkR/1pW9kjE4wZNwijXQFjyrsoYSKJzgEXXf8e7W+rqR5gmXAKXyFak4mgpjvNjdFKGGHsdPy56jhVmQ8Rf6bTVuOoPS7KPKBDMPBeqKbLnFX4VBp3xRoCE6gPaBX01AwVK0rFwfpLvVP/axB5QjcGXRa2LIhUwOLre2AWHE+VoiZDY55pDcQbfRGI63JR2f1PJLoYQ5T8fTQ+HCsCbMgZAcagFQaz+X+0yjCEY5tz/89GOoZLhsxlmZi6ZtWUvVCj+tRjZKglsokttvVGc8Swx932Q7Aut+eJV1cS3Q/wfq2Mopi9IaAYq8vRuSmrnXwzNoIZsrjgvRb9/vvH+phaQS5FUgYiFjnq2bZJ6Exj/1hM6t/HGy9AAAAABJRU5ErkJggg==
   learner_created: false
 - name: test/trees.png
   visible: false
@@ -356,6 +357,51 @@ files:
         println("image $imageName created")
     }
   learner_created: true
+- name: test/small-seam.png
+  visible: true
+  learner_created: true
+- name: src/seamcarving/DataAccessor.kt
+  visible: true
+  learner_created: true
+- name: src/seamcarving/RGB.kt
+  visible: true
+  learner_created: true
 feedback_link: https://hyperskill.org/projects/100/stages/553/implement#comment
-status: Unchecked
+status: Failed
+feedback:
+  message: |-
+    Wrong answer in test #1
+
+    Total energy of your seam (469.438331) does not match expected value (466.371057 +/- 0.000010)
+
+    Please find below the output of your program during this failed test.
+
+    ---
+
+    Arguments: -in test/small.png -out test/small-seam.png
+
+    Buffer size is java.awt.image.DataBufferByte@36feb467.size
+    Buffer size is java.awt.image.DataBufferByte@38a7e987.size
+    [5, 1] = 348.7907682264541, [6, 1] = 138.03260484392808, [7, 1] = 72.98630008433089
+    selected = 1, c: [7, 1]
+    [6, 2] = 211.90799890518525
+    [7, 2] = 60.63002556489647
+    [8, 2] = 103.99519219656263
+    [6, 2] = 211.90799890518525, [7, 2] = 60.63002556489647, [8, 2] = 103.99519219656263
+    selected = 0, c: [7, 2]
+    [6, 3] = 216.09951411328996, [7, 3] = 66.24952830020754, [8, 3] = 17.233687939614086
+    selected = 1, c: [8, 3]
+    [7, 4] = 110.85576214162258, [8, 4] = 34.9857113690718, [9, 4] = 93.57884376289333
+    selected = 0, c: [8, 4]
+    [7, 5] = 121.74974332621815, [8, 5] = 54.47935388750494, [9, 5] = 113.75851616472501
+    selected = 0, c: [8, 5]
+    [7, 6] = 121.57302332343306, [8, 6] = 94.19129471453293, [9, 6] = 84.55175929571188
+    selected = 1, c: [9, 6]
+    [8, 7] = 36.578682316343766, [9, 7] = 65.12296062065974, [10, 7] = 92.00543462209176
+    selected = -1, c: [8, 7]
+    [7, 8] = 97.02061636580135, [8, 8] = 49.52776998815917, [9, 8] = 60.63002556489647
+    selected = 0, c: [8, 8]
+    [7, 9] = 93.47192091746055, [8, 9] = 46.46504062195577, [9, 9] = 46.98936049788292
+    selected = 0, c: [8, 9]
+  time: Sun, 04 Jul 2021 14:32:48 UTC
 record: -1
