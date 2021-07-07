@@ -366,6 +366,9 @@ files:
 - name: src/seamcarving/RGB.kt
   visible: true
   learner_created: true
+- name: src/seamcarving/TreeBuilder.kt
+  visible: true
+  learner_created: true
 feedback_link: https://hyperskill.org/projects/100/stages/553/implement#comment
 status: Failed
 feedback:
