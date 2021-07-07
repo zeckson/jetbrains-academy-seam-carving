@@ -42,7 +42,7 @@ private fun findSeam(
     var lowestEnergy = Double.MAX_VALUE
     var lowestX = 0
 
-    // Find lowest energy
+    // Find lowest energy start node
     for (x in 0..inAccessor.width) {
         val energy = inAccessor.getEnergy(x, 0)
         if (energy < lowestEnergy) {
