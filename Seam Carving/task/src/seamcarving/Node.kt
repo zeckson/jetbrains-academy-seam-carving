@@ -19,22 +19,23 @@ fun <T : Comparable<T>> bfs(parent: Node<T>, visitor: (Node<T>) -> Unit) {
     while (queue.isNotEmpty()) {
         val first = queue.pollFirst()
         visitor(first)
-        for (child in first.children) {
-            queue.addLast(child)
+        val children = PriorityQueue(first.children)
+        while (children.isNotEmpty()) {
+            queue.addLast(children.poll())
         }
     }
 }
 
 fun testBFS() {
     val root = Node("root")
-    root.add(Node("a"))
     val b = Node("b")
     b.add(Node("d"))
     b.add(Node("e"))
-    root.add(b)
     val c = Node("c")
     c.add(Node("f"))
     c.add(Node("g"))
     root.add(c)
+    root.add(b)
+    root.add(Node("a"))
     bfs(root) { log(it.value) }
 }

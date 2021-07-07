@@ -25,6 +25,8 @@ fun main(args: Array<String>) {
     val width = image.width
     val height = image.height
 
+//    testBFS()
+
     val accessor = findSeam(
         DataAccessor(originalRaster.dataBuffer, width, height),
         DataAccessor(copyRaster.dataBuffer, width, height)
