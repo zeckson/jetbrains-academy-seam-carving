@@ -52,18 +52,28 @@ private fun findSeam(
     }
 
     val treeBuilder = TreeBuilder(inAccessor)
-    treeBuilder.buildTree(lowestX)
+    val root = treeBuilder.buildTree(lowestX)
+    var counter = 0
+    bfs(root) {
+        val (x, y) = it.value.coords
+        counter++
+        if (counter < 10) {
+            log(it.value.toString())
+        }
+        outAccessor.setPixel(x, y, RED)
+    }
 
-    var currentX = lowestX
-    var currentY = 0
+
+//    var currentX = lowestX
+//    var currentY = 0
 
     // go seam
-    while (true) {
-        outAccessor.setPixel(currentX, currentY, RED)
-        ++currentY
-        if (currentY == inAccessor.height) break
-        currentX = inAccessor.lowestX(currentX, currentY)
-    }
+//    while (true) {
+//        outAccessor.setPixel(currentX, currentY, RED)
+//        ++currentY
+//        if (currentY == inAccessor.height) break
+//        currentX = inAccessor.lowestX(currentX, currentY)
+//    }
     return outAccessor
 }
 

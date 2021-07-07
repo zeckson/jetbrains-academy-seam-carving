@@ -9,7 +9,7 @@ val PIXEL_COMPARATOR: (o1: Node<Pixel>, o2: Node<Pixel>) -> Int = { left, right 
     sign(left.value.energy - right.value.energy).toInt()
 }
 
-class PixelNode(pixel: Pixel) : Node<Pixel>(pixel, PIXEL_COMPARATOR)
+class PixelNode(pixel: Pixel) : Node<Pixel>(pixel)
 
 class TreeBuilder(private val accessor: DataAccessor) {
     private val pixelCache = HashMap<Pair<Int, Int>, Pixel>()
