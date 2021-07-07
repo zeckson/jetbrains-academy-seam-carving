@@ -51,6 +51,9 @@ private fun findSeam(
         }
     }
 
+    val treeBuilder = TreeBuilder(inAccessor)
+    treeBuilder.buildTree(lowestX)
+
     var currentX = lowestX
     var currentY = 0
 
