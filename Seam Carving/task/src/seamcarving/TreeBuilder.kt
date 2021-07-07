@@ -3,17 +3,6 @@ package seamcarving
 import java.util.*
 import kotlin.math.sign
 
-data class Pixel(val coords: Pair<Int, Int>, val energy: Double) : Comparable<Pixel> {
-    override fun compareTo(other: Pixel): Int = sign(this.energy - other.energy).toInt()
-}
-
-open class Node<T>(val value: T, comparator: Comparator<Node<T>>?) {
-    private val queue = PriorityQueue(3, comparator)
-
-    fun add(node: Node<T>) {
-        queue.add(node)
-    }
-}
 
 // TODO: fix generic Node<Pixel> -> PixelNode
 val PIXEL_COMPARATOR: (o1: Node<Pixel>, o2: Node<Pixel>) -> Int = { left, right ->
@@ -30,7 +19,6 @@ class TreeBuilder(private val accessor: DataAccessor) {
         val pixel =
             getPixel(Pair(startX, 0)) ?: throw IllegalArgumentException("Start pixel not found for [$startX, 0]")
         val parent = PixelNode(pixel)
-        log("Root [${parent.value.coords}]")
         next(parent)
         return parent
     }
@@ -50,7 +38,6 @@ class TreeBuilder(private val accessor: DataAccessor) {
 
         for (pixel in pixels) {
             val node = PixelNode(pixel)
-            log("Parent [${parent.value.coords}] -> [${node.value.coords}]")
             parent.add(node)
             next(node)
         }
