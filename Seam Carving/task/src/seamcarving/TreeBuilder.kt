@@ -1,10 +1,11 @@
 package seamcarving
 
 import java.util.*
-import kotlin.Comparator
 import kotlin.math.sign
 
-data class Pixel(val coords: Pair<Int, Int>, val energy: Double)
+data class Pixel(val coords: Pair<Int, Int>, val energy: Double) : Comparable<Pixel> {
+    override fun compareTo(other: Pixel): Int = sign(this.energy - other.energy).toInt()
+}
 
 open class Node<T>(val value: T, comparator: Comparator<Node<T>>?) {
     private val queue = PriorityQueue(3, comparator)
