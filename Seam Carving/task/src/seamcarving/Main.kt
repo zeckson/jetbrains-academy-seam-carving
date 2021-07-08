@@ -41,20 +41,11 @@ private fun findSeam(
     inAccessor: DataAccessor,
     outAccessor: DataAccessor,
 ): DataAccessor {
-    var lowestEnergy = Double.MAX_VALUE
-    var lowestX = 0
-
-    // Find lowest energy start node
-    for (x in 0..inAccessor.width) {
-        val energy = inAccessor.getEnergy(x, 0)
-        if (energy < lowestEnergy) {
-            lowestEnergy = energy
-            lowestX = x
-        }
-    }
+    val start = findStartPoint(inAccessor)
 
     val treeBuilder = TreeBuilder(inAccessor)
-    val root = treeBuilder.buildTree(lowestX)
+    val root = treeBuilder.buildTree(start)
+
     var counter = 0
     bfs(root) {
         val (x, y) = it.value.coords

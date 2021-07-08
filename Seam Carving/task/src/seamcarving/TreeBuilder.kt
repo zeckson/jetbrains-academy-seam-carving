@@ -15,9 +15,9 @@ class TreeBuilder(private val accessor: DataAccessor) {
     private val pixelCache = HashMap<Pair<Int, Int>, Pixel>()
 
 
-    fun buildTree(startX: Int): PixelNode {
+    fun buildTree(start: Pair<Int, Int>): PixelNode {
         val pixel =
-            getPixel(Pair(startX, 0)) ?: throw IllegalArgumentException("Start pixel not found for [$startX, 0]")
+            getPixel(start) ?: throw IllegalArgumentException("Start pixel not found for [$start]")
         val parent = PixelNode(pixel)
         next(parent)
         return parent
