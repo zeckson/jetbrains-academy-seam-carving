@@ -4,3 +4,6 @@
 build
 
 local.properties
+
+course-*.yaml
+task-*.yaml
