@@ -1,5 +1,6 @@
 package seamcarving
 
+import seamcarving.exception.OutOfBufferException
 import java.awt.image.DataBuffer
 import kotlin.math.pow
 import kotlin.math.sqrt

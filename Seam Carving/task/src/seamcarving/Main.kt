@@ -46,16 +46,28 @@ private fun findSeam(
     val treeBuilder = TreeBuilder(inAccessor)
     val root = treeBuilder.buildTree(start)
 
-    var counter = 0
-    bfs(root) {
-        val (x, y) = it.value.coords
-        counter++
-        if (counter < 10) {
-            log(it.value.toString())
-        }
-        outAccessor.setPixel(x, y, RED)
-    }
+    val scoreMap = dijkstra(root)
 
+    var current: Node<Pixel> = root
+    while (true) {
+        log(current.value.toString())
+
+        var next = current
+        var lowestScore = Double.MAX_VALUE
+        for (node in current.children) {
+            val score = scoreMap[node]
+            if (score != null) {
+                val currentScore = score.score
+                if (currentScore < lowestScore) {
+                    lowestScore = currentScore
+                    next = node
+                }
+            }
+        }
+        if (next == current) break
+
+        current = next
+    }
 
 //    var currentX = lowestX
 //    var currentY = 0
