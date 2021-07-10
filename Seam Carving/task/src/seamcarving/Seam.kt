@@ -27,6 +27,46 @@ data class Score(val node: Node<Pixel>, var score: Double = Double.MAX_VALUE) : 
     }
 }
 
+fun direct(inAccessor: DataAccessor, outAccessor: DataAccessor) {
+    var (x, y) = findStartPoint(inAccessor)
+
+    // go seam
+    while (true) {
+        outAccessor.setPixel(x, y, RED)
+        ++y
+        if (y == inAccessor.height) break
+        x = inAccessor.lowestX(x, y)
+    }
+}
+
+fun findShortestPath(
+    start: PixelNode,
+    outAccessor: DataAccessor,
+    scoreMap: HashMap<Node<Pixel>, Score>
+) {
+    var current: Node<Pixel> = start
+    while (true) {
+        log(current.value.toString())
+        val (x, y) = current.value.coords
+        outAccessor.setPixel(x, y, RED)
+
+        var next = current
+        var lowestScore = Double.MAX_VALUE
+        for (node in current.children) {
+            val score = scoreMap[node]
+            if (score != null) {
+                val currentScore = score.score
+                if (currentScore < lowestScore) {
+                    lowestScore = currentScore
+                    next = node
+                }
+            }
+        }
+        if (next == current) break
+
+        current = next
+    }
+}
 
 fun dijkstra(root: Node<Pixel>): HashMap<Node<Pixel>, Score> {
     val unprocessed = LinkedList<Score>()

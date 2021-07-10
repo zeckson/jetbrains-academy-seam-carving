@@ -48,40 +48,10 @@ private fun findSeam(
 
     val scoreMap = dijkstra(root)
 
-    var current: Node<Pixel> = root
-    while (true) {
-        log(current.value.toString())
+    findShortestPath(root, outAccessor, scoreMap)
 
-        var next = current
-        var lowestScore = Double.MAX_VALUE
-        for (node in current.children) {
-            val score = scoreMap[node]
-            if (score != null) {
-                val currentScore = score.score
-                if (currentScore < lowestScore) {
-                    lowestScore = currentScore
-                    next = node
-                }
-            }
-        }
-        if (next == current) break
-
-        current = next
-    }
-
-//    var currentX = lowestX
-//    var currentY = 0
-
-    // go seam
-//    while (true) {
-//        outAccessor.setPixel(currentX, currentY, RED)
-//        ++currentY
-//        if (currentY == inAccessor.height) break
-//        currentX = inAccessor.lowestX(currentX, currentY)
-//    }
     return outAccessor
 }
-
 private fun buildEnergyMap(
     buffer: DataBuffer,
     width: Int,
