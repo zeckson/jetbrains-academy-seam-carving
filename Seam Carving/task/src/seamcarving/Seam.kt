@@ -42,18 +42,17 @@ fun direct(inAccessor: DataAccessor, outAccessor: DataAccessor) {
 fun findShortestPath(
     start: PixelNode,
     outAccessor: DataAccessor,
-    scoreMap: HashMap<Node<Pixel>, Score>
+    scoreMap: HashMap<Pixel, Score>
 ) {
     var current: Node<Pixel> = start
     while (true) {
-        log(current.value.toString())
         val (x, y) = current.value.coords
         outAccessor.setPixel(x, y, RED)
 
         var next = current
         var lowestScore = Double.MAX_VALUE
         for (node in current.children) {
-            val score = scoreMap[node]
+            val score = scoreMap[node.value]
             if (score != null) {
                 val currentScore = score.score
                 if (currentScore < lowestScore) {
@@ -62,21 +61,22 @@ fun findShortestPath(
                 }
             }
         }
+        log(current.value.toString() + "$lowestScore" )
         if (next == current) break
 
         current = next
     }
 }
 
-fun dijkstra(root: Node<Pixel>): HashMap<Node<Pixel>, Score> {
+fun dijkstra(root: Node<Pixel>): HashMap<Pixel, Score> {
     val unprocessed = LinkedList<Score>()
     val visited = HashSet<Node<Pixel>>()
-    val scoredMap = HashMap<Node<Pixel>, Score>()
+    val scoredMap = HashMap<Pixel, Score>()
 
     val initial = Score(root, 0.0)
     unprocessed.push(initial)
     visited.add(root)
-    scoredMap[root] = initial
+    scoredMap[root.value] = initial
     while (unprocessed.isNotEmpty()) {
         val parent = unprocessed.pollFirst()
 
@@ -87,10 +87,10 @@ fun dijkstra(root: Node<Pixel>): HashMap<Node<Pixel>, Score> {
 
             val pixel = child.value
             val score = parent.score + pixel.energy
-            var scored = scoredMap[child]
+            var scored = scoredMap[child.value]
             if (scored == null) {
                 scored = Score(child)
-                scoredMap[child] = scored
+                scoredMap[child.value] = scored
             }
             if (score < scored.score) {
                 scored.score = score

@@ -13,7 +13,6 @@ fun log(value: String) {
     }
 }
 
-val RED = RGB(255, 0, 0)
 fun main(args: Array<String>) {
     val input = args[1]
     val output = args[3]
@@ -48,10 +47,53 @@ private fun findSeam(
 
     val scoreMap = dijkstra(root)
 
-    findShortestPath(root, outAccessor, scoreMap)
+    val lowestKey: Pixel? = findMinimal(scoreMap, inAccessor)
+    if (lowestKey != null) {
+        traceBack(scoreMap, lowestKey, outAccessor)
+    }
 
     return outAccessor
 }
+
+private fun findMinimal(
+    scoreMap: HashMap<Pixel, Score>,
+    inAccessor: DataAccessor
+): Pixel? {
+    var lowestKey: Pixel? = null
+    var lowest = Double.MAX_VALUE
+    for (el in scoreMap) {
+        val pixel = el.key
+        val (_, y) = pixel.coords
+        if (y == inAccessor.height - 1) {
+            val score = el.value.score
+            if (score < lowest) {
+                lowest = score
+                lowestKey = pixel
+            }
+        }
+    }
+    return lowestKey
+}
+
+private fun traceBack(
+    scoreMap: HashMap<Pixel, Score>,
+    lowestKey: Pixel,
+    outAccessor: DataAccessor
+) {
+    val score = scoreMap[lowestKey]
+    if (score != null) {
+        val (x, y) = lowestKey.coords
+        outAccessor.setPixel(x, y, RED)
+        var parent = score.parent
+        while (parent != null) {
+            val coords = parent.node.value.coords
+            outAccessor.setPixel(coords.first, coords.second, RED)
+            parent = parent.parent
+        }
+    }
+    log("$lowestKey ${score?.score}")
+}
+
 private fun buildEnergyMap(
     buffer: DataBuffer,
     width: Int,
