@@ -14,30 +14,30 @@ fun toRGB(color: Int): Triple<Int, Int, Int> {
 }
 
 private fun toInt(rgb: Triple<Int, Int, Int>): Int {
-    return (0xFF shl 24) or (rgb.first shl 16) or (rgb.second shl 8) or rgb.third;
+    return (0xFF shl 24) or (rgb.first shl 16) or (rgb.second shl 8) or rgb.third
 }
 
 
 fun pixel(data: Int): String = Integer.toBinaryString(data)
 
 class RGBPrinter(val data: IntArray, val width: Int, val height: Int) {
-    public fun negate(): IntArray {
+    fun negate(): IntArray {
         val negative = IntArray(data.size)
         for (idx in data.indices) {
             val rgb = toRGB(data[idx])
             negative[idx] = toInt(Triple(255 - rgb.first, 255 - rgb.second, 255 - rgb.third))
         }
-        return negative;
+        return negative
     }
 
     override fun toString(): String {
         val buffer = StringBuffer()
-        var first = true;
+        var first = true
         for (w in 0 until this.width) {
             if (!first) {
                 buffer.append("\n")
             }
-            first = false;
+            first = false
             for (h in 0 until this.height) {
                 val d = data[w * width + h]
                 buffer.append(toRGB(d))

@@ -51,6 +51,16 @@ class EnergyMap(width: Int, height: Int) :
 
     }
 
+    fun traceback(end: Coordinate, visitor: (coords: Coordinate) -> Unit) {
+        visitor(end)
+        var (x, y) = end
+        while (y > 0) {
+            y--
+            val lowest = lowest(Coordinate(x, y))
+            visitor(lowest)
+            x = lowest.first
+        }
+    }
 
     fun getLowestEnergy(line: Int): Coordinate {
         var lowestEnergy = Double.MAX_VALUE

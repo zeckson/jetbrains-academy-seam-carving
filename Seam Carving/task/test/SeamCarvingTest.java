@@ -22,7 +22,7 @@ class CheckFailException extends Exception {
 }
 
 class Image {
-    private BufferedImage image;
+    private final BufferedImage image;
 
     Image(String filename) throws IOException {
         image = ImageIO.read(new File(filename));
