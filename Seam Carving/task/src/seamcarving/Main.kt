@@ -4,7 +4,6 @@ import seamcarving.data.DataAccessor
 import seamcarving.data.EnergyMap
 import java.awt.image.Raster
 import java.io.File
-import java.util.*
 import javax.imageio.ImageIO
 import kotlin.collections.HashMap
 
@@ -20,7 +19,7 @@ fun main(args: Array<String>) {
     val width = image.width
     val height = image.height
 
-    val accessor = buildEnergyMap(
+    val accessor = findSeam2(
         DataAccessor(originalRaster.dataBuffer, width, height),
         DataAccessor(copyRaster.dataBuffer, width, height)
     )
@@ -44,6 +43,32 @@ private fun findSeam(
     val lowestKey: Pixel? = findMinimal(scoreMap, inAccessor)
     if (lowestKey != null) {
         traceBack(scoreMap, lowestKey, outAccessor)
+    }
+
+    return outAccessor
+}
+
+private fun findSeam2(
+    inAccessor: DataAccessor,
+    outAccessor: DataAccessor,
+): DataAccessor {
+    val energyMap = createEnergyMap(inAccessor)
+    val start = energyMap.getLowestEnergy(0)
+
+    log(energyMap.printToString())
+
+    log("Start: $start")
+
+
+
+    val end = dijkstra2(start, energyMap)
+
+    log(energyMap.printToString())
+    log("End: $end")
+
+    traceback(end, energyMap) {
+        log("$it")
+        outAccessor.set(it, RED)
     }
 
     return outAccessor
@@ -92,10 +117,7 @@ private fun buildEnergyMap(
     inAccessor: DataAccessor,
     outAccessor: DataAccessor
 ): DataAccessor {
-    val energyMap = EnergyMap(inAccessor.width, inAccessor.height)
-    inAccessor.forEach { x, y ->
-        energyMap.set(x, y, inAccessor.getEnergy(x, y))
-    }
+    val energyMap = createEnergyMap(inAccessor)
 
     energyMap.forEach { x, y ->
         val energy = energyMap.get(x, y)
@@ -104,6 +126,14 @@ private fun buildEnergyMap(
     }
 
     return outAccessor
+}
+
+private fun createEnergyMap(inAccessor: DataAccessor): EnergyMap {
+    val energyMap = EnergyMap(inAccessor.width, inAccessor.height)
+    inAccessor.forEach { x, y ->
+        energyMap.set(x, y, inAccessor.getEnergy(x, y))
+    }
+    return energyMap
 }
 
 

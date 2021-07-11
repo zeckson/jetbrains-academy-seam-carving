@@ -2,7 +2,10 @@ package seamcarving
 
 import seamcarving.data.Coordinate
 import seamcarving.data.DataAccessor
+import seamcarving.data.Energy
+import seamcarving.data.EnergyMap
 import java.util.*
+import kotlin.math.min
 import kotlin.math.sign
 
 fun findStartPoint(accessor: DataAccessor): Pair<Int, Int> {
@@ -70,30 +73,87 @@ fun findShortestPath(
 }
 
 
-class Vertex<T>(val coords: Coordinate, val value: T, val parent: Vertex<T>? = null)
-
-fun dijkstra2(start: Coordinate, inAccessor: DataAccessor) {
-    val queue = LinkedList<Vertex<Double>>()
-    queue.push(Vertex(start, inAccessor.getEnergy(start)))
+fun dijkstra2(start: Coordinate, energyMap: EnergyMap): Coordinate {
+    val queue = LinkedList<Coordinate>()
+    queue.push(start)
+    var lowest = Double.MAX_VALUE
+    var lowestCoordinate = start
     while (queue.isNotEmpty()) {
-        val parent = queue.pollFirst()
-//        pushChildren(parent, queue)
-//        val children = PriorityQueue(parent.children)
-//        while (children.isNotEmpty()) {
-//            queue.addLast(children.poll())
-//        }
+        val current = queue.pollFirst()
+        val lowestParentEnergy = getLowestParentEnergy(current, energyMap)
+        val energy = energyMap.get(current)
+        if (lowestParentEnergy > 0) {
+            energyMap.set(current, energy + lowestParentEnergy)
+        }
+        pushChildren(current, energyMap, queue)
+        val lastLine = current.second == energyMap.height - 1
+        if (lastLine) {
+            if (energy < lowest) {
+                lowest = energy
+                lowestCoordinate = current
+            }
+        }
     }
 
+    return lowestCoordinate
 }
 
-fun pushChildren(parent: Vertex<Double>, accessor: DataAccessor, queue: LinkedList<Vertex<Double>>) {
-    val (x, y) = parent.coords
-    val nextY = y + 1;
-    if (nextY >= accessor.height) return
+
+fun getLowestParentEnergy(current: Coordinate, energyMap: EnergyMap): Energy {
+    val (x, y) = current
+
+    val parentY = y - 1
+    if (parentY < 0) return -1.0
+
+    var lowest = energyMap.get(x, parentY)
+
     val left = x - 1
     if (left >= 0) {
-//        queue.push(Vertex(Coordinate(left, nextY),accessor.getEnergy()))
+        lowest = min(energyMap.get(left, parentY), lowest)
     }
+
+    val right = x + 1
+    if (right <= energyMap.width - 1) {
+        lowest = min(energyMap.get(right, parentY), lowest)
+    }
+
+    return lowest
+}
+
+fun pushChildren(parent: Coordinate, map: EnergyMap, queue: LinkedList<Coordinate>) {
+    val (x, y) = parent
+
+    val nextY = y + 1
+    if (nextY >= map.height) return
+
+    val left = x - 1
+    if (left >= 0) {
+        queue.pushNew(Coordinate(left, nextY))
+    }
+
+    queue.pushNew(Coordinate(x, nextY))
+
+    val right = x + 1
+    if (right <= map.width - 1) {
+        queue.pushNew(Coordinate(right, nextY))
+    }
+}
+
+fun traceback(end: Pair<Int, Int>, energyMap: EnergyMap, visitor: (coords: Coordinate) -> Unit) {
+    visitor(end)
+    var (x, y) = end
+    while (y > 0) {
+        y--
+        val lowest = energyMap.lowest(Coordinate(x, y))
+        visitor(lowest)
+        x = lowest.first
+    }
+}
+
+
+private fun <E> LinkedList<E>.pushNew(value: E) {
+    if (this.contains(value)) return
+    this.push(value)
 }
 
 fun dijkstra(root: Node<Pixel>): HashMap<Pixel, Score> {

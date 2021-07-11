@@ -3,6 +3,7 @@ package seamcarving.data
 import seamcarving.exception.OutOfBufferException
 import seamcarving.log
 import java.awt.image.DataBuffer
+import java.lang.StringBuilder
 
 typealias Coordinate = Pair<Int, Int>
 
@@ -36,5 +37,17 @@ abstract class DataBufferAccessor<T>(
             throw OutOfBufferException(buffer.size, x, y)
         }
         return start
+    }
+
+    fun printToString():String {
+        val builder = StringBuilder()
+        for (x in 0 until width) {
+            for (y in 0 until height) {
+                builder.append(get(x, y))
+                builder.append(",")
+            }
+            builder.append("\n")
+        }
+        return builder.toString()
     }
 }
