@@ -48,8 +48,6 @@ private fun buildSeam(
     return outAccessor
 }
 
-
-
 private fun buildEnergyMap(
     inAccessor: DataAccessor,
     outAccessor: DataAccessor
@@ -59,7 +57,7 @@ private fun buildEnergyMap(
     energyMap.forEach { x, y ->
         val energy = energyMap.get(x, y)
         val intensity = (255.0 * energy / energyMap.maxValue).toInt()
-        outAccessor.setPixel(x, y, RGB(intensity, intensity, intensity))
+        outAccessor.set(x, y, RGB(intensity, intensity, intensity))
     }
 
     return outAccessor

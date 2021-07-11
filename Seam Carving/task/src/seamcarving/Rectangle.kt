@@ -9,7 +9,7 @@ fun toRGB(color: Int): Triple<Int, Int, Int> {
     val blue = color and 0xFF
     val green = (color shr 8) and 0xFF
     val red = (color shr 16) and 0xFF
-    val alpha = (color shr 24) and 0xFF
+//  val alpha = (color shr 24) and 0xFF
     return Triple(red, green, blue)
 }
 
@@ -20,7 +20,7 @@ private fun toInt(rgb: Triple<Int, Int, Int>): Int {
 
 fun pixel(data: Int): String = Integer.toBinaryString(data)
 
-class RGBPrinter(val data: IntArray, val width: Int, val height: Int) {
+class RGBPrinter(private val data: IntArray, private val width: Int, private val height: Int) {
     fun negate(): IntArray {
         val negative = IntArray(data.size)
         for (idx in data.indices) {

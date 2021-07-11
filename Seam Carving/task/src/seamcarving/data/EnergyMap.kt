@@ -19,7 +19,7 @@ class EnergyMap(width: Int, height: Int) :
 
     override fun get(x: Int, y: Int): Energy = buffer.getElemDouble(offset(x, y))
 
-    fun lowest(coordinate: Coordinate): Coordinate {
+    private fun lowest(coordinate: Coordinate): Coordinate {
         val (x, y) = coordinate
         var result = coordinate
         var lowest = get(coordinate)
