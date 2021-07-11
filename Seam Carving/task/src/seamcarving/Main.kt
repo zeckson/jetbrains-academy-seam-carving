@@ -6,12 +6,6 @@ import java.awt.image.Raster
 import java.io.File
 import javax.imageio.ImageIO
 
-const val LOG = true
-fun log(value: String) {
-    if (LOG) {
-        println(value)
-    }
-}
 
 fun main(args: Array<String>) {
     val input = args[1]

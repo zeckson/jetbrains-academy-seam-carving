@@ -15,7 +15,7 @@ fun gradient(left: RGB, right: RGB): Double {
 
 class DataAccessor(val buffer: DataBuffer, val width: Int, val height: Int) {
     init {
-        log("Buffer size is $buffer.size")
+        log("Buffer size is ${buffer.size}")
     }
 
     fun getEnergy(x: Int, y: Int): Double {
