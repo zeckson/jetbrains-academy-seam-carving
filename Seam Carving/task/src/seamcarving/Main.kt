@@ -2,10 +2,10 @@ package seamcarving
 
 import seamcarving.data.DataAccessor
 import seamcarving.data.EnergyMap
+import seamcarving.data.EnergyMapBuilder
 import java.awt.image.Raster
 import java.io.File
 import javax.imageio.ImageIO
-import kotlin.collections.HashMap
 
 
 fun main(args: Array<String>) {
@@ -61,15 +61,15 @@ private fun findSeam2(
 
 
 
-    val end = dijkstra2(start, energyMap)
+    val end = dijkstra2(start, inAccessor)
 
     log(energyMap.printToString())
     log("End: $end")
 
-    traceback(end, energyMap) {
-        log("$it")
-        outAccessor.set(it, RED)
-    }
+//    traceback(end, energyMap) {
+//        log("$it")
+//        outAccessor.set(it, RED)
+//    }
 
     return outAccessor
 }

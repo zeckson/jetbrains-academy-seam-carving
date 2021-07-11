@@ -3,7 +3,6 @@ package seamcarving.data
 import seamcarving.exception.OutOfBufferException
 import seamcarving.log
 import java.awt.image.DataBuffer
-import java.lang.StringBuilder
 
 typealias Coordinate = Pair<Int, Int>
 
@@ -31,6 +30,8 @@ abstract class DataBufferAccessor<T>(
         }
     }
 
+    fun forEach(fn: (coords: Coordinate) -> Unit) = forEach { x, y -> fn(seamcarving.data.Coordinate(x, y)) }
+
     protected fun offset(x: Int, y: Int): Int {
         val start = (y * width + x) * dataLength
         if (start > buffer.size) {
@@ -39,10 +40,10 @@ abstract class DataBufferAccessor<T>(
         return start
     }
 
-    fun printToString():String {
+    fun printToString(): String {
         val builder = StringBuilder()
-        for (x in 0 until width) {
-            for (y in 0 until height) {
+        for (y in 0 until height) {
+            for (x in 0 until width) {
                 builder.append(get(x, y))
                 builder.append(",")
             }

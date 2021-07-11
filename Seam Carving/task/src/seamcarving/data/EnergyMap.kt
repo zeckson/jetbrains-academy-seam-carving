@@ -2,7 +2,7 @@ package seamcarving.data
 
 import seamcarving.log
 import java.awt.image.DataBufferDouble
-import java.lang.StringBuilder
+import kotlin.math.min
 
 typealias Energy = Double
 
@@ -20,11 +20,11 @@ class EnergyMap(width: Int, height: Int) :
     override fun get(x: Int, y: Int): Energy = buffer.getElemDouble(offset(x, y))
 
     fun lowest(coordinate: Coordinate): Coordinate {
-        val (x,y) = coordinate
+        val (x, y) = coordinate
         var result = coordinate
         var lowest = get(coordinate)
 
-        val logInfo  = StringBuilder()
+        val logInfo = StringBuilder()
 
         val leftX = x - 1
         if (leftX >= 0) {
@@ -51,10 +51,6 @@ class EnergyMap(width: Int, height: Int) :
 
     }
 
-    fun buildSeam() {
-
-    }
-
 
     fun getLowestEnergy(line: Int): Coordinate {
         var lowestEnergy = Double.MAX_VALUE
@@ -70,6 +66,27 @@ class EnergyMap(width: Int, height: Int) :
         }
 
         return Coordinate(lowestX, line)
+    }
+
+    fun getLowestParentEnergy(coords: Coordinate): Double {
+        val (x, y) = coords
+
+        val parentY = y - 1
+        if (parentY < 0) return 0.0
+
+        var lowest = get(x, parentY)
+
+        val left = x - 1
+        if (left >= 0) {
+            lowest = min(get(left, parentY), lowest)
+        }
+
+        val right = x + 1
+        if (right <= width - 1) {
+            lowest = min(get(right, parentY), lowest)
+        }
+
+        return lowest
     }
 
 }

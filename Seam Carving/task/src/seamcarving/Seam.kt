@@ -5,6 +5,7 @@ import seamcarving.data.DataAccessor
 import seamcarving.data.Energy
 import seamcarving.data.EnergyMap
 import java.util.*
+import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sign
 
@@ -73,19 +74,18 @@ fun findShortestPath(
 }
 
 
-fun dijkstra2(start: Coordinate, energyMap: EnergyMap): Coordinate {
+fun dijkstra2(start: Coordinate, accessor: DataAccessor): EnergyMap {
+    val energyMap = EnergyMap(accessor.width, accessor.height)
     val queue = LinkedList<Coordinate>()
     queue.push(start)
     var lowest = Double.MAX_VALUE
     var lowestCoordinate = start
     while (queue.isNotEmpty()) {
         val current = queue.pollFirst()
+        val energy = max(energyMap.get(current), accessor.getEnergy(current))
         val lowestParentEnergy = getLowestParentEnergy(current, energyMap)
-        val energy = energyMap.get(current)
-        if (lowestParentEnergy > 0) {
-            energyMap.set(current, energy + lowestParentEnergy)
-        }
-        pushChildren(current, energyMap, queue)
+        energyMap.set(current, energy + lowestParentEnergy)
+        pushChildren(current, energyMap, PriorityQueue(3))
         val lastLine = current.second == energyMap.height - 1
         if (lastLine) {
             if (energy < lowest) {
@@ -95,15 +95,24 @@ fun dijkstra2(start: Coordinate, energyMap: EnergyMap): Coordinate {
         }
     }
 
-    return lowestCoordinate
+    log("Lowest: $lowestCoordinate")
+
+    return energyMap
 }
+
+data class Energy(val coords: Coordinate, val value: Double = Double.MAX_VALUE) : Comparable<seamcarving.Energy> {
+    override fun compareTo(other: seamcarving.Energy): Int {
+        return sign(value - other.value).toInt()
+    }
+}
+
 
 
 fun getLowestParentEnergy(current: Coordinate, energyMap: EnergyMap): Energy {
     val (x, y) = current
 
     val parentY = y - 1
-    if (parentY < 0) return -1.0
+    if (parentY < 0) return 0.0
 
     var lowest = energyMap.get(x, parentY)
 
@@ -120,22 +129,25 @@ fun getLowestParentEnergy(current: Coordinate, energyMap: EnergyMap): Energy {
     return lowest
 }
 
-fun pushChildren(parent: Coordinate, map: EnergyMap, queue: LinkedList<Coordinate>) {
+fun pushChildren(parent: Coordinate, energyMap: EnergyMap, queue: PriorityQueue<seamcarving.Energy>) {
     val (x, y) = parent
 
     val nextY = y + 1
-    if (nextY >= map.height) return
+    if (nextY >= energyMap.height) return
 
     val left = x - 1
     if (left >= 0) {
-        queue.pushNew(Coordinate(left, nextY))
+        val coords = Coordinate(left, nextY)
+        queue.add(Energy(coords, energyMap.get(coords)))
     }
 
-    queue.pushNew(Coordinate(x, nextY))
+    val coords = Coordinate(x, nextY)
+    queue.add(Energy(coords, energyMap.get(coords)))
 
     val right = x + 1
-    if (right <= map.width - 1) {
-        queue.pushNew(Coordinate(right, nextY))
+    if (right <= energyMap.width - 1) {
+        val c = Coordinate(right, nextY)
+        queue.add(Energy(c, energyMap.get(c)))
     }
 }
 
