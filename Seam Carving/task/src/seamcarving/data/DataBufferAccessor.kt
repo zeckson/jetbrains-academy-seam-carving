@@ -23,8 +23,8 @@ abstract class DataBufferAccessor<T>(
     abstract fun get(x: Int, y: Int): T
 
     fun forEach(fn: (x: Int, y: Int) -> Unit) {
-        for (x in 0 until width) {
-            for (y in 0 until height) {
+        for (y in 0 until height) {
+            for (x in 0 until width) {
                 fn(x, y)
             }
         }
@@ -44,8 +44,7 @@ abstract class DataBufferAccessor<T>(
         val builder = StringBuilder()
         for (y in 0 until height) {
             for (x in 0 until width) {
-                builder.append(get(x, y))
-                builder.append(",")
+                builder.append("%6.2f,".format(get(x, y)))
             }
             builder.append("\n")
         }

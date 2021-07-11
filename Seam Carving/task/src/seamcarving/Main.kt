@@ -52,24 +52,18 @@ private fun findSeam2(
     inAccessor: DataAccessor,
     outAccessor: DataAccessor,
 ): DataAccessor {
-    val energyMap = createEnergyMap(inAccessor)
-    val start = energyMap.getLowestEnergy(0)
+    val energyMap = EnergyMapBuilder.createVerticalSeamsMap(inAccessor)
 
     log(energyMap.printToString())
 
-    log("Start: $start")
+    val end = energyMap.getLowestEnergy(energyMap.height - 1)
 
-
-
-    val end = dijkstra2(start, inAccessor)
-
-    log(energyMap.printToString())
     log("End: $end")
 
-//    traceback(end, energyMap) {
-//        log("$it")
-//        outAccessor.set(it, RED)
-//    }
+    traceback(end, energyMap) {
+        log("$it")
+        outAccessor.set(it, RED)
+    }
 
     return outAccessor
 }

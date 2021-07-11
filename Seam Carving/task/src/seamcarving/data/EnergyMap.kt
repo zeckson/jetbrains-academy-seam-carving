@@ -82,7 +82,7 @@ class EnergyMap(width: Int, height: Int) :
         }
 
         val right = x + 1
-        if (right <= width - 1) {
+        if (right < width) {
             lowest = min(get(right, parentY), lowest)
         }
 
