@@ -1,5 +1,6 @@
 package seamcarving
 
+import seamcarving.data.DataAccessor
 import java.awt.image.DataBuffer
 import java.awt.image.DataBufferByte
 import java.awt.image.Raster

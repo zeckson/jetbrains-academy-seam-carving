@@ -1,5 +1,6 @@
 package seamcarving
 
+import seamcarving.data.DataAccessor
 import java.util.*
 import kotlin.math.sign
 

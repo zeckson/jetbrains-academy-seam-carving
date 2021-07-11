@@ -1,10 +1,11 @@
-package seamcarving
+package seamcarving.data
 
-import seamcarving.exception.OutOfBufferException
+import seamcarving.RGB
+import seamcarving.log
 import java.awt.image.DataBuffer
 import kotlin.math.sqrt
 
-class DataAccessor(val buffer: DataBuffer, val width: Int, val height: Int) {
+class DataAccessor(buffer: DataBuffer, width: Int, height: Int) : DataBufferAccessor(buffer, width, height) {
     init {
         log("Buffer size is ${buffer.size}")
     }
@@ -28,12 +29,12 @@ class DataAccessor(val buffer: DataBuffer, val width: Int, val height: Int) {
     }
 
     fun getPixel(x: Int, y: Int): RGB {
-        val start = offset(y, x)
+        val start = offset(x, y)
         return RGB(buffer.getElem(start + 2), buffer.getElem(start + 1), buffer.getElem(start))
     }
 
     fun setPixel(x: Int, y: Int, value: RGB) {
-        val start = offset(y, x)
+        val start = offset(x, y)
         buffer.setElem(start, value.b)
         buffer.setElem(start + 1, value.g)
         buffer.setElem(start + 2, value.r)
@@ -67,19 +68,4 @@ class DataAccessor(val buffer: DataBuffer, val width: Int, val height: Int) {
 
     }
 
-    fun forEach(fn: (x: Int, y: Int) -> Unit) {
-        for (x in 0 until width) {
-            for (y in 0 until height) {
-                fn(x, y)
-            }
-        }
-    }
-
-    private fun offset(y: Int, x: Int): Int {
-        val start = (y * width + x) * 3
-        if (start > buffer.size) {
-            throw OutOfBufferException(size = buffer.size, x, y)
-        }
-        return start
-    }
 }
