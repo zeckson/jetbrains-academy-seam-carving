@@ -5,10 +5,9 @@ import seamcarving.log
 import java.awt.image.DataBuffer
 import kotlin.math.sqrt
 
-class DataAccessor(buffer: DataBuffer, width: Int, height: Int) : DataBufferAccessor(buffer, width, height) {
-    init {
-        log("Buffer size is ${buffer.size}")
-    }
+class DataAccessor(buffer: DataBuffer, width: Int, height: Int) :
+    DataBufferAccessor<RGB>(buffer, width, height, dataLength = 3) {
+    fun getEnergy(coords: Pair<Int, Int>): Double = getEnergy(coords.first, coords.second)
 
     fun getEnergy(x: Int, y: Int): Double {
         val pointX = when (x) {
@@ -67,5 +66,9 @@ class DataAccessor(buffer: DataBuffer, width: Int, height: Int) : DataBufferAcce
         return out
 
     }
+
+    override fun set(x: Int, y: Int, value: RGB) = setPixel(x, y, value)
+
+    override fun get(x: Int, y: Int): RGB = getPixel(x, y)
 
 }

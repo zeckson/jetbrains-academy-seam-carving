@@ -1,11 +1,12 @@
 package seamcarving
 
 import seamcarving.data.DataAccessor
-import java.awt.image.DataBuffer
-import java.awt.image.DataBufferByte
+import seamcarving.data.EnergyMap
 import java.awt.image.Raster
 import java.io.File
+import java.util.*
 import javax.imageio.ImageIO
+import kotlin.collections.HashMap
 
 
 fun main(args: Array<String>) {
@@ -19,9 +20,7 @@ fun main(args: Array<String>) {
     val width = image.width
     val height = image.height
 
-//    testBFS()
-
-    val accessor = findSeam(
+    val accessor = buildEnergyMap(
         DataAccessor(originalRaster.dataBuffer, width, height),
         DataAccessor(copyRaster.dataBuffer, width, height)
     )
@@ -90,27 +89,21 @@ private fun traceBack(
 }
 
 private fun buildEnergyMap(
-    buffer: DataBuffer,
-    width: Int,
-    height: Int,
+    inAccessor: DataAccessor,
+    outAccessor: DataAccessor
 ): DataAccessor {
-    val accessor = DataAccessor(buffer, width, height)
-    var maxEnergy = 0.0
-    accessor.forEach { x, y ->
-        val energy = accessor.getEnergy(x, y)
-        if (energy > maxEnergy) {
-            maxEnergy = energy
-        }
+    val energyMap = EnergyMap(inAccessor.width, inAccessor.height)
+    inAccessor.forEach { x, y ->
+        energyMap.set(x, y, inAccessor.getEnergy(x, y))
     }
 
-    val energyAccessor = DataAccessor(DataBufferByte(buffer.size), width, height)
-    accessor.forEach { x, y ->
-        val energy = accessor.getEnergy(x, y)
-        val intensity = (255.0 * energy / maxEnergy).toInt()
-        energyAccessor.setPixel(x, y, RGB(intensity, intensity, intensity))
+    energyMap.forEach { x, y ->
+        val energy = energyMap.get(x, y)
+        val intensity = (255.0 * energy / energyMap.maxValue).toInt()
+        outAccessor.setPixel(x, y, RGB(intensity, intensity, intensity))
     }
 
-    return energyAccessor
+    return outAccessor
 }
 
 

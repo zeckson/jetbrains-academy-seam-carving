@@ -1,8 +1,8 @@
 package seamcarving
 
+import seamcarving.data.Coordinate
 import seamcarving.data.DataAccessor
 import java.util.*
-import kotlin.collections.HashMap
 import kotlin.math.sign
 
 fun findStartPoint(accessor: DataAccessor): Pair<Int, Int> {
@@ -22,7 +22,7 @@ fun findStartPoint(accessor: DataAccessor): Pair<Int, Int> {
 }
 
 data class Score(val node: Node<Pixel>, var score: Double = Double.MAX_VALUE) : Comparable<Score> {
-    var parent:Score? = null
+    var parent: Score? = null
     override fun compareTo(other: Score): Int {
         return sign(score - other.score).toInt()
     }
@@ -62,10 +62,37 @@ fun findShortestPath(
                 }
             }
         }
-        log(current.value.toString() + "$lowestScore" )
+        log(current.value.toString() + "$lowestScore")
         if (next == current) break
 
         current = next
+    }
+}
+
+
+class Vertex<T>(val coords: Coordinate, val value: T, val parent: Vertex<T>? = null)
+
+fun dijkstra2(start: Coordinate, inAccessor: DataAccessor) {
+    val queue = LinkedList<Vertex<Double>>()
+    queue.push(Vertex(start, inAccessor.getEnergy(start)))
+    while (queue.isNotEmpty()) {
+        val parent = queue.pollFirst()
+//        pushChildren(parent, queue)
+//        val children = PriorityQueue(parent.children)
+//        while (children.isNotEmpty()) {
+//            queue.addLast(children.poll())
+//        }
+    }
+
+}
+
+fun pushChildren(parent: Vertex<Double>, accessor: DataAccessor, queue: LinkedList<Vertex<Double>>) {
+    val (x, y) = parent.coords
+    val nextY = y + 1;
+    if (nextY >= accessor.height) return
+    val left = x - 1
+    if (left >= 0) {
+//        queue.push(Vertex(Coordinate(left, nextY),accessor.getEnergy()))
     }
 }
 
