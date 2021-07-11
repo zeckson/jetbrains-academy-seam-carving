@@ -2,16 +2,7 @@ package seamcarving
 
 import seamcarving.exception.OutOfBufferException
 import java.awt.image.DataBuffer
-import kotlin.math.pow
 import kotlin.math.sqrt
-
-fun gradient(left: RGB, right: RGB): Double {
-    var result = (left.r - right.r).toDouble().pow(2)
-    result += (left.g - right.g).toDouble().pow(2)
-    result += (left.b - right.b).toDouble().pow(2)
-    return result
-}
-
 
 class DataAccessor(val buffer: DataBuffer, val width: Int, val height: Int) {
     init {
@@ -30,8 +21,8 @@ class DataAccessor(val buffer: DataBuffer, val width: Int, val height: Int) {
             else -> y
         }
 
-        val gradientX = gradient(getPixel(pointX - 1, y), getPixel(pointX + 1, y))
-        val gradientY = gradient(getPixel(x, pointY - 1), getPixel(x, pointY + 1))
+        val gradientX = getPixel(pointX - 1, y).gradient(getPixel(pointX + 1, y))
+        val gradientY = getPixel(x, pointY - 1).gradient(getPixel(x, pointY + 1))
 
         return sqrt(gradientX + gradientY)
     }
@@ -86,7 +77,6 @@ class DataAccessor(val buffer: DataBuffer, val width: Int, val height: Int) {
 
     private fun offset(y: Int, x: Int): Int {
         val start = (y * width + x) * 3
-//        log("$x, $y = $start")
         if (start > buffer.size) {
             throw OutOfBufferException(size = buffer.size, x, y)
         }
