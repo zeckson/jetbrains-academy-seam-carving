@@ -78,7 +78,7 @@ class EnergyMap(width: Int, height: Int) :
         return Coordinate(lowestX, line)
     }
 
-    fun getLowestParentEnergy(coords: Coordinate): Double {
+    fun getLowestUpEnergy(coords: Coordinate): Double {
         val (x, y) = coords
 
         val parentY = y - 1
