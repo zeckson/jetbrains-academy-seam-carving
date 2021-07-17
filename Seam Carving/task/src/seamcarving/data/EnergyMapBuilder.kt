@@ -12,7 +12,7 @@ object EnergyMapBuilder {
     fun createVerticalSeamsMap(accessor: DataAccessor): EnergyMap {
         val energyMap = EnergyMap(accessor.width, accessor.height)
         accessor.forEach { coords: Coordinate ->
-            val parentEnergy = energyMap.getLowestParentEnergy(coords)
+            val parentEnergy = energyMap.getLowestUpEnergy(coords)
             val energy = accessor.getEnergy(coords) + parentEnergy
             energyMap.set(coords, energy)
         }

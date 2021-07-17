@@ -19,6 +19,8 @@ class EnergyMap(width: Int, height: Int) :
 
     override fun get(x: Int, y: Int): Energy = buffer.getElemDouble(offset(x, y))
 
+    override fun newEmptyCopy(): DataBufferAccessor<Energy> = EnergyMap(width, height)
+
     private fun lowest(coordinate: Coordinate): Coordinate {
         val (x, y) = coordinate
         var result = coordinate

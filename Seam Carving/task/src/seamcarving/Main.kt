@@ -2,35 +2,35 @@ package seamcarving
 
 import seamcarving.data.DataAccessor
 import seamcarving.data.EnergyMapBuilder
+import java.awt.image.BufferedImage
+import java.awt.image.DataBufferByte
 import java.awt.image.Raster
 import java.io.File
 import javax.imageio.ImageIO
 
 
 fun main(args: Array<String>) {
-    val input = args[1]
-    val output = args[3]
+    val inputName = args[1]
+    val outputName = args[3]
 
-    val image = ImageIO.read(File(input))
+    val image = ImageIO.read(File(inputName))
     val originalRaster = image.raster
-    val copyRaster = image.copyData(null)
 
     val width = image.width
     val height = image.height
 
     val accessor = buildSeam(
         DataAccessor(originalRaster.dataBuffer, width, height),
-        DataAccessor(copyRaster.dataBuffer, width, height)
     )
 
-    image.data = Raster.createWritableRaster(originalRaster.sampleModel, accessor.buffer, null)
+    val out = BufferedImage(accessor.width, accessor.height, image.type)
+    out.data = Raster.createWritableRaster(originalRaster.sampleModel, accessor.buffer, null)
 
-    ImageIO.write(image, "png", File(output))
+    ImageIO.write(out, "png", File(outputName))
 }
 
 private fun buildSeam(
     inAccessor: DataAccessor,
-    outAccessor: DataAccessor,
 ): DataAccessor {
     val energyMap = EnergyMapBuilder.createVerticalSeamsMap(inAccessor)
 
@@ -40,6 +40,8 @@ private fun buildSeam(
 
     log("End: $end")
 
+    val outAccessor = inAccessor.copy() as DataAccessor
+
     energyMap.traceback(end) {
         log("$it")
         outAccessor.set(it, RED)
@@ -48,11 +50,26 @@ private fun buildSeam(
     return outAccessor
 }
 
+private fun rotate(
+    inAccessor: DataAccessor,
+): DataAccessor {
+    val size = 3
+    val result = DataAccessor(
+        DataBufferByte(inAccessor.width * inAccessor.height * size),
+        inAccessor.height,
+        inAccessor.width,
+    )
+    inAccessor.forEach { (x, y) -> result.set(y, x, inAccessor.get(x, y)) }
+
+    return result
+}
+
 private fun buildEnergyMap(
     inAccessor: DataAccessor,
-    outAccessor: DataAccessor
 ): DataAccessor {
     val energyMap = EnergyMapBuilder.createEnergyMap(inAccessor)
+
+    val outAccessor = DataAccessor.newEmptyAccessor(inAccessor.width, inAccessor.height)
 
     energyMap.forEach { x, y ->
         val energy = energyMap.get(x, y)

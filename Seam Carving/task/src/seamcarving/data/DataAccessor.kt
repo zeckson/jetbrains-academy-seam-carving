@@ -38,4 +38,11 @@ class DataAccessor(buffer: DataBuffer, width: Int, height: Int) :
         return RGB(buffer.getElem(start + 2), buffer.getElem(start + 1), buffer.getElem(start))
     }
 
+    override fun newEmptyCopy(): DataBufferAccessor<RGB> = newEmptyAccessor(width, height)
+
+    companion object {
+        fun newEmptyAccessor(width: Int, height: Int) =
+            DataAccessor(newByteBuffer(width, height), width, height)
+    }
+
 }

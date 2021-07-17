@@ -3,6 +3,7 @@ package seamcarving.data
 import seamcarving.exception.OutOfBufferException
 import seamcarving.log
 import java.awt.image.DataBuffer
+import java.awt.image.DataBufferByte
 
 typealias Coordinate = Pair<Int, Int>
 
@@ -21,6 +22,8 @@ abstract class DataBufferAccessor<T>(
 
     abstract fun set(x: Int, y: Int, value: T)
     abstract fun get(x: Int, y: Int): T
+
+    abstract fun newEmptyCopy(): DataBufferAccessor<T>
 
     fun forEach(fn: (x: Int, y: Int) -> Unit) {
         for (y in 0 until height) {
@@ -49,5 +52,17 @@ abstract class DataBufferAccessor<T>(
             builder.append("\n")
         }
         return builder.toString()
+    }
+
+    fun copy(): DataBufferAccessor<out T> {
+        val result = newEmptyCopy()
+        forEach { it ->
+            result.set(it, this.get(it))
+        }
+        return result
+    }
+
+    companion object {
+        fun newByteBuffer(width: Int, height: Int) = DataBufferByte(width * height * 3)
     }
 }
