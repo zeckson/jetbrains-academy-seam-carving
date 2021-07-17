@@ -1,5 +1,6 @@
 package seamcarving
 
+import seamcarving.data.Coordinate
 import seamcarving.data.DataAccessor
 import seamcarving.data.EnergyMapBuilder
 import java.awt.image.BufferedImage
@@ -17,21 +18,24 @@ fun main(args: Array<String>) {
 
     val width = image.width
     val height = image.height
+    val source = DataAccessor(originalRaster.dataBuffer, width, height)
 
-    val accessor = rotate(
-        DataAccessor(originalRaster.dataBuffer, width, height),
-    )
+    val right: DataAccessor.(source: Coordinate) -> Coordinate = { (x, y) -> Coordinate(y, x) }
+    val rightRotate = rotate(source, right)
+    val seam = buildSeam(rightRotate)
+    val target = rotate(seam, right)
 
-    val out = BufferedImage(accessor.width, accessor.height, image.type)
+    val out = BufferedImage(target.width, target.height, image.type)
     out.data = Raster.createWritableRaster(
         originalRaster.sampleModel.createCompatibleSampleModel(
-            accessor.width,
-            accessor.height
-        ), accessor.buffer, null
+            target.width,
+            target.height
+        ), target.buffer, null
     )
 
     ImageIO.write(out, "png", File(outputName))
 }
+
 
 private fun buildSeam(
     inAccessor: DataAccessor,
@@ -56,13 +60,14 @@ private fun buildSeam(
 
 private fun rotate(
     inAccessor: DataAccessor,
+    transform: DataAccessor.(source: Coordinate) -> Coordinate
 ): DataAccessor {
     val width = inAccessor.height
     val height = inAccessor.width
 
     val out = DataAccessor.newEmptyAccessor(width, height)
 
-    inAccessor.forEach { (x, y) -> out.set(y, x, inAccessor.get(x, y)) }
+    inAccessor.forEach { it -> out.set(out.transform(it), inAccessor.get(it)) }
 
     return out
 }
