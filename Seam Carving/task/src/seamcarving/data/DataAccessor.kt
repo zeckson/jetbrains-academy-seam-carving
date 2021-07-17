@@ -45,4 +45,6 @@ class DataAccessor(buffer: DataBuffer, width: Int, height: Int) :
             DataAccessor(newByteBuffer(width, height), width, height)
     }
 
+    override fun print(x: Int, y: Int): String = get(x, y).toString()
+
 }

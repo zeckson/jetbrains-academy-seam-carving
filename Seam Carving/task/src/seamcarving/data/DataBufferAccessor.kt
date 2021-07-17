@@ -47,12 +47,14 @@ abstract class DataBufferAccessor<T>(
         val builder = StringBuilder()
         for (y in 0 until height) {
             for (x in 0 until width) {
-                builder.append("%6.2f,".format(get(x, y)))
+                builder.append(print(x, y))
             }
             builder.append("\n")
         }
         return builder.toString()
     }
+
+    protected open fun print(x: Int, y: Int) = "%6.2f,".format(get(x, y))
 
     fun copy(): DataBufferAccessor<out T> {
         val result = newEmptyCopy()

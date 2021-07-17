@@ -23,7 +23,12 @@ fun main(args: Array<String>) {
     )
 
     val out = BufferedImage(accessor.width, accessor.height, image.type)
-    out.data = Raster.createWritableRaster(originalRaster.sampleModel, accessor.buffer, null)
+    out.data = Raster.createWritableRaster(
+        originalRaster.sampleModel.createCompatibleSampleModel(
+            accessor.width,
+            accessor.height
+        ), accessor.buffer, null
+    )
 
     ImageIO.write(out, "png", File(outputName))
 }
@@ -57,7 +62,7 @@ private fun rotate(
 
     val out = DataAccessor.newEmptyAccessor(width, height)
 
-    inAccessor.forEach { (x, y) -> out.set(width - y - 1, height - x - 1, inAccessor.get(x, y)) }
+    inAccessor.forEach { (x, y) -> out.set(y, x, inAccessor.get(x, y)) }
 
     return out
 }
