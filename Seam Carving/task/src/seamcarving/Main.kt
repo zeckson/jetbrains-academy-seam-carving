@@ -12,6 +12,8 @@ import javax.imageio.ImageIO
 fun main(args: Array<String>) {
     val inputName = args[1]
     val outputName = args[3]
+    val vertical = (args.size > 4).let { args[5] }
+    val horizontal = (args.size > 4).let { args[7] }
 
     val image = ImageIO.read(File(inputName))
     val originalRaster = image.raster
@@ -20,10 +22,7 @@ fun main(args: Array<String>) {
     val height = image.height
     val source = DataAccessor(originalRaster.dataBuffer, width, height)
 
-    val right: DataAccessor.(source: Coordinate) -> Coordinate = { (x, y) -> Coordinate(y, x) }
-    val rightRotate = rotate(source, right)
-    val seam = buildSeam(rightRotate)
-    val target = rotate(seam, right)
+    val target = horizontalSeam(source)
 
     val out = BufferedImage(target.width, target.height, image.type)
     out.data = Raster.createWritableRaster(
@@ -36,8 +35,16 @@ fun main(args: Array<String>) {
     ImageIO.write(out, "png", File(outputName))
 }
 
+private fun horizontalSeam(
+    inAccessor: DataAccessor,
+): DataAccessor {
+    val right: DataAccessor.(source: Coordinate) -> Coordinate = { (x, y) -> Coordinate(y, x) }
+    val rightRotate = rotate(inAccessor, right)
+    val seam = verticalSeam(rightRotate)
+    return rotate(seam, right)
+}
 
-private fun buildSeam(
+private fun verticalSeam(
     inAccessor: DataAccessor,
 ): DataAccessor {
     val energyMap = EnergyMapBuilder.createVerticalSeamsMap(inAccessor)
