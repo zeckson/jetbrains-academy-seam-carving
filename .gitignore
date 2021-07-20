@@ -9,5 +9,6 @@ local.properties
 
 course-*.yaml
 *.yaml
+*.html
 
 *.png
