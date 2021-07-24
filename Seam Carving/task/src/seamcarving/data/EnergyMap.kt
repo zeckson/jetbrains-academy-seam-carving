@@ -1,5 +1,6 @@
 package seamcarving.data
 
+import seamcarving.RED
 import seamcarving.log
 import java.awt.image.DataBufferDouble
 import kotlin.math.min
@@ -19,7 +20,7 @@ class EnergyMap(width: Int, height: Int) :
 
     override fun get(x: Int, y: Int): Energy = buffer.getElemDouble(offset(x, y))
 
-    override fun newEmptyCopy(): DataBufferAccessor<Energy> = EnergyMap(width, height)
+    override fun newEmptyCopy(width: Int, height: Int): DataBufferAccessor<Energy> = EnergyMap(width, height)
 
     private fun lowest(coordinate: Coordinate): Coordinate {
         val (x, y) = coordinate
@@ -62,6 +63,19 @@ class EnergyMap(width: Int, height: Int) :
             visitor(lowest)
             x = lowest.first
         }
+    }
+
+    fun getSeam(): IntArray {
+        val result = IntArray(height)
+        val end = this.getLowestEnergy(height - 1)
+
+        log("End: $end")
+
+        traceback(end) {
+            log("$it")
+            result[it.second] = it.first
+        }
+        return result
     }
 
     fun getLowestEnergy(line: Int): Coordinate {

@@ -49,20 +49,11 @@ private fun verticalSeam(
 ): DataAccessor {
     val energyMap = EnergyMapBuilder.createVerticalSeamsMap(inAccessor)
 
-    log(energyMap.printToString())
+    val seam = energyMap.getSeam()
 
-    val end = energyMap.getLowestEnergy(energyMap.height - 1)
+    log(seam.joinToString(","))
 
-    log("End: $end")
-
-    val outAccessor = inAccessor.copy() as DataAccessor
-
-    energyMap.traceback(end) {
-        log("$it")
-        outAccessor.set(it, RED)
-    }
-
-    return outAccessor
+    return inAccessor.copy(seam) as DataAccessor
 }
 
 private fun rotate(

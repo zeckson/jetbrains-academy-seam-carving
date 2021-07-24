@@ -23,7 +23,7 @@ abstract class DataBufferAccessor<T>(
     abstract fun set(x: Int, y: Int, value: T)
     abstract fun get(x: Int, y: Int): T
 
-    abstract fun newEmptyCopy(): DataBufferAccessor<T>
+    abstract fun newEmptyCopy(width: Int = this.width, height: Int = this.height): DataBufferAccessor<T>
 
     fun forEach(fn: (x: Int, y: Int) -> Unit) {
         for (y in 0 until height) {
@@ -60,6 +60,18 @@ abstract class DataBufferAccessor<T>(
         val result = newEmptyCopy()
         forEach { it ->
             result.set(it, this.get(it))
+        }
+        return result
+    }
+
+    fun copy(except: IntArray): DataBufferAccessor<out T> {
+        val result = newEmptyCopy(this.width - 1, this.height)
+        forEach { (x, y) ->
+            val exclude = except[y]
+            when {
+                x > exclude -> result.set(x - 1, y, get(x, y))
+                x < exclude -> result.set(x, y, get(x, y))
+            }
         }
         return result
     }
