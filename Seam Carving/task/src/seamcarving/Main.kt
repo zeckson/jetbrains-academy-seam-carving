@@ -12,17 +12,25 @@ import javax.imageio.ImageIO
 fun main(args: Array<String>) {
     val inputName = args[1]
     val outputName = args[3]
-    val vertical = (args.size > 4).let { args[5] }
-    val horizontal = (args.size > 4).let { args[7] }
+    val vertical = (args.size > 4).let { args[5].toInt() }
+    val horizontal = (args.size > 4).let { args[7].toInt() }
 
     val image = ImageIO.read(File(inputName))
     val originalRaster = image.raster
 
     val width = image.width
     val height = image.height
-    val source = DataAccessor(originalRaster.dataBuffer, width, height)
+    var source = DataAccessor(originalRaster.dataBuffer, width, height)
 
-    val target = horizontalSeam(source)
+    for (i in 0 until vertical) {
+        source = removeVerticalSeam(source)
+    }
+
+    for (i in 0 until horizontal) {
+        source = removeHorizontalSeam(source)
+    }
+
+    val target = source
 
     val out = BufferedImage(target.width, target.height, image.type)
     out.data = Raster.createWritableRaster(
@@ -35,16 +43,16 @@ fun main(args: Array<String>) {
     ImageIO.write(out, "png", File(outputName))
 }
 
-private fun horizontalSeam(
+private fun removeHorizontalSeam(
     inAccessor: DataAccessor,
 ): DataAccessor {
     val right: DataAccessor.(source: Coordinate) -> Coordinate = { (x, y) -> Coordinate(y, x) }
     val rightRotate = rotate(inAccessor, right)
-    val seam = verticalSeam(rightRotate)
+    val seam = removeVerticalSeam(rightRotate)
     return rotate(seam, right)
 }
 
-private fun verticalSeam(
+private fun removeVerticalSeam(
     inAccessor: DataAccessor,
 ): DataAccessor {
     val energyMap = EnergyMapBuilder.createVerticalSeamsMap(inAccessor)
